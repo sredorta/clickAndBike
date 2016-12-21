@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -173,10 +174,12 @@ public class CloudFetchr {
         //Define the POST parameters in a HashMap
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("name", "toto_for_now");
+
         URL url = buildUrl(PHP_STATIONS_GET,parameters);
         JsonItem networkAnswer = getJSON(url);
         return networkAnswer;
     }
+
     public Boolean setStatus(String action) {
         //Define the POST parameters in a HashMap
         HashMap<String, String> parameters = new HashMap<>();

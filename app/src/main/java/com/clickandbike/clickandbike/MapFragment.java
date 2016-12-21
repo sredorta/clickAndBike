@@ -99,7 +99,6 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
 
 
     private void findMyLocation() {
-        Toast.makeText(getActivity(),"here",Toast.LENGTH_SHORT).show();
         final LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         request.setNumUpdates(1);
@@ -120,7 +119,7 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
                     public void onLocationChanged(Location location) {
                         //Toast.makeText(getActivity(),"Got current location:" + location,Toast.LENGTH_LONG).show();
                         new SearchTask().execute(location);
-                        LocationServices.FusedLocationApi.removeLocationUpdates(mClient,this);
+                        //LocationServices.FusedLocationApi.removeLocationUpdates(mClient,this);
                     }
                 });
     }
@@ -133,6 +132,23 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
         if (mStation.getLatitude().equals("not_available") || mStation.getLongitude().equals("not_available")) {
             Log.i("SERGI", "Station2 has no coords !");
             return;
+        }
+        if (mStation.getTimeDelta() > 10000) {
+
+            if (stationMarker != null) {
+
+                    stationMarker.setVisible(false);
+                if (stationMarker.isVisible()) {
+                    Toast.makeText(getActivity(), "Station has been disconnected !", Toast.LENGTH_SHORT).show();
+                }
+            }
+            return;
+        }
+        if (stationMarker != null) {
+                stationMarker.setVisible(true);
+            if (!stationMarker.isVisible()) {
+                Toast.makeText(getActivity(), "Station has been reconnected !", Toast.LENGTH_SHORT).show();
+            }
         }
         mMap.setOnMarkerClickListener(this);
         LatLng myPoint   = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
