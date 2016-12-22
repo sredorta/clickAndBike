@@ -33,14 +33,13 @@ public class JsonItem {
 
 
         public long getTimeDelta() {
-            long myTime = new Date().getTime();
-            long stationTime = 0;
+            long stationTimeDelta = 0;
             if (mTime.equals("not_available")) {
-                stationTime = 0;
+                stationTimeDelta = 0;
             } else {
-                stationTime = Long.valueOf(mTime);
+                stationTimeDelta = Long.valueOf(mTime);
             }
-            return (myTime -stationTime);
+            return (stationTimeDelta);
         }
         public boolean getSuccess() {
             if (mSuccess.equals("1")) {

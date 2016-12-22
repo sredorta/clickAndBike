@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -49,6 +50,10 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
     public static MapFragment newInstance() {
         return new MapFragment();
     }
+    private static Handler handler = new Handler();
+    private LatLng itemPoint;
+    private LatLng myPoint;
+    private Boolean isFirstTime = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,13 +66,11 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
                     public void onConnected(@Nullable Bundle bundle) {
                         //Invalideate options menu when callback says connected so that button is updated
                         findMyLocation();
-                        updateUI();
-
                     }
 
                     @Override
                     public void onConnectionSuspended(int i) {
-
+                        handler.removeCallbacks(sendData);
                     }
                 })
                 .build();
@@ -97,13 +100,30 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
         mClient.disconnect();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("SERGI","onResume");
+        if (mMap == null) {
+            return;
+        }
+        //Create a listehenr
+        //mMap.setOnMarkerClickListener(this);
+        // Add a marker with my location
+        myPoint   = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+        MarkerOptions myMarker = new MarkerOptions()
+                .position(myPoint);
+        mMap.clear();
+//        stationMarker = mMap.addMarker(itemMarker);
+        mMap.addMarker(myMarker);
+    }
 
     private void findMyLocation() {
         final LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setNumUpdates(1);
-        request.setFastestInterval(10000);
-        request.setInterval(10000);
+        request.setNumUpdates(10000);
+        request.setFastestInterval(5000);
+        request.setInterval(5000);
         request.setSmallestDisplacement(300);
 
         //request.setExpirationDuration(4000);
@@ -118,7 +138,12 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
                     @Override
                     public void onLocationChanged(Location location) {
                         //Toast.makeText(getActivity(),"Got current location:" + location,Toast.LENGTH_LONG).show();
-                        new SearchTask().execute(location);
+                        //new SearchTask().execute(location);
+                        mCurrentLocation = location;
+                        //Initial UI update
+                        updateUI();
+                        //Start polling to see if there are station changes
+                        handler.postDelayed(sendData, 5000);
                         //LocationServices.FusedLocationApi.removeLocationUpdates(mClient,this);
                     }
                 });
@@ -126,57 +151,49 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
 
     private void updateUI() {
         Log.i("SERGI","Updating map");
-        if (mMap == null || mStation.getLatitude() == null || mStation.getLongitude() == null) {
+        if (mMap == null) {
             return;
         }
-        if (mStation.getLatitude().equals("not_available") || mStation.getLongitude().equals("not_available")) {
-            Log.i("SERGI", "Station2 has no coords !");
-            return;
-        }
-        if (mStation.getTimeDelta() > 10000) {
-
-            if (stationMarker != null) {
-
-                    stationMarker.setVisible(false);
-                if (stationMarker.isVisible()) {
-                    Toast.makeText(getActivity(), "Station has been disconnected !", Toast.LENGTH_SHORT).show();
-                }
-            }
-            return;
-        }
-        if (stationMarker != null) {
-                stationMarker.setVisible(true);
-            if (!stationMarker.isVisible()) {
-                Toast.makeText(getActivity(), "Station has been reconnected !", Toast.LENGTH_SHORT).show();
-            }
-        }
+        //Create a listehenr
         mMap.setOnMarkerClickListener(this);
-        LatLng myPoint   = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
-
-//        Toast.makeText(getActivity(),"item \nlat: " + mMapItem.getLat() + "\nlon: " + mMapItem.getLon(), Toast.LENGTH_LONG).show();
-//        Toast.makeText(getActivity(),"curr\n lat: " + mCurrentLocation.getLatitude() + "\nlon: " + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
-        //Add markers on the two points
-        LatLng itemPoint = new LatLng(Double.valueOf(mStation.getLatitude()), Double.valueOf(mStation.getLongitude()));
-        BitmapDescriptor itemBitmap = BitmapDescriptorFactory.fromResource(R.drawable.bike_icon);
-        MarkerOptions itemMarker = new MarkerOptions()
-                .position(itemPoint)
-                .title(mStation.getName())
-                .icon(itemBitmap)
-                .zIndex(10);
-
+        // Add a marker with my location
+        myPoint   = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
         MarkerOptions myMarker = new MarkerOptions()
                 .position(myPoint);
         mMap.clear();
-        stationMarker = mMap.addMarker(itemMarker);
+//        stationMarker = mMap.addMarker(itemMarker);
         mMap.addMarker(myMarker);
-        LatLngBounds bounds = new LatLngBounds.Builder()
-               .include(itemPoint)
-                .include(myPoint)
-                .build();
-        //int margin = getResources().getDimensionPixelSize(R.dimen.map_intersect_margin);
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds,0);
-        mMap.animateCamera(update);
 
+        if (itemPoint != null) {
+            BitmapDescriptor itemBitmap = BitmapDescriptorFactory.fromResource(R.drawable.bike_icon);
+            MarkerOptions itemMarker = new MarkerOptions()
+                    .position(itemPoint)
+                    .title(mStation.getName())
+                    .icon(itemBitmap)
+                    .zIndex(10);
+
+            itemMarker.visible(true);
+            stationMarker = mMap.addMarker(itemMarker);
+            if (isFirstTime) {
+                LatLngBounds bounds = new LatLngBounds.Builder()
+                        .include(itemPoint)
+                        .include(myPoint)
+                        .build();
+                //int margin = getResources().getDimensionPixelSize(R.dimen.map_intersect_margin);
+                CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, 10);
+                mMap.animateCamera(update);
+            }
+        } else {
+            if (isFirstTime) {
+                //Toast.makeText(getActivity(), "No station found !", Toast.LENGTH_SHORT).show();
+                LatLngBounds bounds = new LatLngBounds.Builder()
+                        .include(myPoint)
+                        .build();
+                //int margin = getResources().getDimensionPixelSize(R.dimen.map_intersect_margin);
+                CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, 10);
+                mMap.animateCamera(update);
+            }
+        }
     }
 
     @Override
@@ -189,6 +206,54 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
         }
         return false;
     }
+
+    //We check every 5s what is the status of the stations and if there are changes we update UI
+    private final Runnable sendData = new Runnable() {
+        @Override
+        public void run() {
+            //Do something after POLL_INTERVAL
+            CloudTask task = new CloudTask();
+            task.execute();
+            handler.postDelayed(this, 5000);
+        }};
+
+    private class CloudTask extends AsyncTask<Location,Void,Void> {
+       @Override
+        protected Void doInBackground(Location... params) {
+            CloudFetchr fetchr = new CloudFetchr();
+            JsonItem item = fetchr.getStation();
+            mStation = item;
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (mStation.getTimeDelta() > 5) {
+                //Station should not be visible
+                if (stationMarker != null) {
+                    if (stationMarker.isVisible()) {
+                        stationMarker.remove();
+                        stationMarker = null;
+                        itemPoint = null;
+                        updateUI();
+                    }
+                } else {
+                    itemPoint = null;
+                }
+            } else {
+                if (stationMarker != null) {
+                    if (!stationMarker.isVisible()) {
+                        updateUI();
+                    }
+                } else {
+                    itemPoint = new LatLng(Double.valueOf(mStation.getLatitude()), Double.valueOf(mStation.getLongitude()));
+                    updateUI();
+                }
+            }
+            isFirstTime = false;
+        }
+    }
+
 
     private class SearchTask extends AsyncTask<Location,Void,Void> {
  //       private GalleryItem mGalleryItem;

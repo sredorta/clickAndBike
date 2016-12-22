@@ -163,7 +163,7 @@ public class CloudFetchr {
 
         } catch (IOException e) {
             // Error
-            Log.i(TAG, "POST method try ", e);
+            //Log.i(TAG, "POST method try ", e);
             return "";
         }
         Log.i(TAG, response);
