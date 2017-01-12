@@ -85,8 +85,8 @@ public class LoginFragment extends Fragment {
                 String user = String.valueOf(userInput.getText());
                 String password = String.valueOf(passwordInput.getText());
 
-                QueryPreferences.setPreference(getActivity(),QueryPreferences.PREFERENCE_USER_NAME,user);
-                QueryPreferences.setPreference(getActivity(),QueryPreferences.PREFERENCE_USER_PASSWORD,password);
+                //QueryPreferences.setPreference(getActivity(),QueryPreferences.PREFERENCE_USER_NAME,user);
+                //QueryPreferences.setPreference(getActivity(),QueryPreferences.PREFERENCE_USER_PASSWORD,password);
                 //Executes sequentially tasks
                 CloudFetchr.setDebugMode(true);
 
@@ -121,10 +121,10 @@ public class LoginFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
             statusInternet = CloudFetchr.isNetworkConnected();
             statusCloud = new CloudFetchr().isCloudConnected();
-            statusUser = new CloudFetchr().isUserRegistered(
+            /*statusUser = new CloudFetchr().isUserRegistered(
                     QueryPreferences.getPreference(getActivity(),QueryPreferences.PREFERENCE_USER_NAME),
                     QueryPreferences.getPreference(getActivity(),QueryPreferences.PREFERENCE_USER_PASSWORD),
-                    "users");
+                    "users");*/
 
             return true;
         }

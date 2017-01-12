@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.clickandbike.clickandbike.DAO.CloudFetchr;
 import com.clickandbike.clickandbike.DAO.JsonItem;
 import com.clickandbike.clickandbike.R;
+import com.clickandbike.clickandbike.Singleton.User;
 
 import static com.clickandbike.clickandbike.Authentication.AccountGeneral.sServerAuthenticate;
 import static com.clickandbike.clickandbike.Authentication.SignInActivity.ARG_ACCOUNT_TYPE;
@@ -68,6 +69,7 @@ public class SignUpActivity extends Activity {
                     data.putString(KEY_ERROR_MESSAGE, e.getMessage());
                 }
                 //Check if we got a token... if it's null it means that we could not signUp
+
                 if (authtoken == null) {
                     //Redo the query to get server answer
                     JsonItem item = new CloudFetchr().userSignUpDetails(name, accountName, accountPassword,"users");
@@ -84,6 +86,13 @@ public class SignUpActivity extends Activity {
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
                     Toast.makeText(getBaseContext(), intent.getStringExtra(KEY_ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
                 } else {
+                    //Store into the preferences all this data so that we can reload when necessary
+                    User.uFirstName = name;
+                    User.uLastName  = name;
+                    User.uEmail = accountName;
+                    User me = User.getUser();
+                    me.saveToPreferences();
+
                     setResult(RESULT_OK, intent);
                     finish();
                 }

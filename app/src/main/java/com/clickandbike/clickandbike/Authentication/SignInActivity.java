@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.clickandbike.clickandbike.DAO.CloudFetchr;
 import com.clickandbike.clickandbike.DAO.JsonItem;
 import com.clickandbike.clickandbike.R;
+import com.clickandbike.clickandbike.Singleton.User;
+
 import static com.clickandbike.clickandbike.Authentication.AccountGeneral.sServerAuthenticate;
 
 /**
@@ -44,6 +46,16 @@ public class SignInActivity extends android.accounts.AccountAuthenticatorActivit
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_login);
+        final TextView  userTextView = (TextView) findViewById(R.id.fragment_login_EditText_user);
+        final TextView  passTextView = (TextView) findViewById(R.id.fragment_login_EditText_password);
+
+
+        //Init the preferences (this can only be done once !)
+        User me = User.getUser();
+        me.init(getApplicationContext());
+        userTextView.setText(User.uFirstName);
+
+
         mAccountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);

@@ -11,8 +11,10 @@ public class QueryPreferences {
     private static Boolean DEBUG_MODE = true;
     private static final String TAG = "QueryPreferences::";
 
-    public static final String PREFERENCE_USER_NAME = "name";
-    public static final String PREFERENCE_USER_PASSWORD = "password";
+    public static final String PREFERENCE_USER_FIRST_NAME = "first_name";
+    public static final String PREFERENCE_USER_LAST_NAME = "last_name";
+    public static final String PREFERENCE_USER_EMAIL = "email";
+    public static final String PREFERENCE_USER_TOKEN = "token";
 
     public static void setPreference(Context context, String preference, String value) {
         if (DEBUG_MODE) Log.i(TAG, "Stored into preferences: " + preference + " : " + value);
