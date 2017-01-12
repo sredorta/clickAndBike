@@ -1,15 +1,12 @@
-package com.clickandbike.clickandbike;
+package com.clickandbike.clickandbike.Activity;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
+import com.clickandbike.clickandbike.Fragment.MapFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.*;
-
 
 
 public class MapActivity extends SingleFragmentActivity {

@@ -1,14 +1,14 @@
-package com.clickandbike.clickandbike;
+package com.clickandbike.clickandbike.Activity;
 
-import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.Toast;
+
+import com.clickandbike.clickandbike.DAO.CloudFetchr;
+import com.clickandbike.clickandbike.R;
 
 public class ButtonActivity extends AppCompatActivity {
 
@@ -23,27 +23,27 @@ public class ButtonActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     Log.i("SERGI","Sending ON");
-                    new SearchTask().execute("on");
+                    new SearchTask().execute();
                 } else {
                     Log.i("SERGI","Sending OFF");
-                    new SearchTask().execute("off");
+                    new SearchTask().execute();
                 }
             }
         });
     }
 
-    private class SearchTask extends AsyncTask<String,Void,Void> {
+    private class SearchTask extends AsyncTask<Void,Void,Boolean> {
         //       private GalleryItem mGalleryItem;
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Boolean doInBackground(Void... params) {
             CloudFetchr fetchr = new CloudFetchr();
-            fetchr.setStatus(params[0]);
+ //           fetchr.setStatus(params[0]);
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
 
         }
     }

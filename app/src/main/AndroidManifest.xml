@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -18,14 +19,32 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyA_zbauzXhhqQpjFyoxdfymvtRHIAJFYdE" />
 
-        <activity android:name=".MapActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".Activity.LoginActivity" android:theme="@style/LoginTheme"/>
+        <activity android:name=".Activity.ButtonActivity"></activity>
+        <activity android:name=".Activity.MapActivity"></activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".Authentication.SignInActivity" android:theme="@style/LoginTheme">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
-        <activity android:name=".ButtonActivity"></activity>
+
+        <activity android:name=".Authentication.SignUpActivity" android:theme="@style/LoginTheme" />
+
+        <service android:name=".Authentication.LockerAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+
+
+
+
     </application>
 
 </manifest>

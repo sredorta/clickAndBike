@@ -1,9 +1,11 @@
-package com.clickandbike.clickandbike;
+package com.clickandbike.clickandbike.Activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+
+import com.clickandbike.clickandbike.R;
 
 /**
  * Created by sredorta on 9/19/2016.

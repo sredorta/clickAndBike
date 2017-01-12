@@ -1,10 +1,8 @@
-package com.clickandbike.clickandbike;
+package com.clickandbike.clickandbike.Fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,11 +11,12 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.clickandbike.clickandbike.Activity.ButtonActivity;
+import com.clickandbike.clickandbike.DAO.CloudFetchr;
+import com.clickandbike.clickandbike.DAO.JsonItem;
+import com.clickandbike.clickandbike.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -33,9 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by sredorta on 11/8/2016.
@@ -55,6 +51,17 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
     private LatLng myPoint;
     private Boolean isFirstTime = true;
 
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker.equals(stationMarker)) {
+            Toast.makeText(getActivity(),"clicked !",Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+
+/*
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,11 +279,9 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
 
         @Override
         protected void onPostExecute(Void result) {
-/*            mMapImage = mBitmap;
-            mMapItem = mGalleryItem;*/
             mCurrentLocation = mLocation;
             updateUI();
         }
     }
-
+*/
 }
