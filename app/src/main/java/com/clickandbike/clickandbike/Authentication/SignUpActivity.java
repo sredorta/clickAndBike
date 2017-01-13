@@ -24,7 +24,7 @@ import static com.clickandbike.clickandbike.Authentication.SignInActivity.PARAM_
 //Create new user account activity
 public class SignUpActivity extends Activity {
     private static Boolean DEBUG_MODE = true;
-    private String TAG = getClass().getSimpleName();
+    private String TAG = getClass().getSimpleName() + "::";
     private String mAccountType;
 
     @Override
@@ -74,6 +74,14 @@ public class SignUpActivity extends Activity {
                     //Redo the query to get server answer
                     JsonItem item = new CloudFetchr().userSignUpDetails(name, accountName, accountPassword,"users");
                     data.putString(KEY_ERROR_MESSAGE, item.getMessage());
+                } else {
+                    //Store into the preferences all this data so that we can reload when necessary
+                    User.uFirstName = name;
+                    User.uLastName  = name;
+                    User.uEmail = accountName;
+                    User.uToken = authtoken;
+                    User me = User.getUser();
+                    me.saveToPreferences();
                 }
 
                 final Intent res = new Intent();
@@ -86,13 +94,6 @@ public class SignUpActivity extends Activity {
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
                     Toast.makeText(getBaseContext(), intent.getStringExtra(KEY_ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
                 } else {
-                    //Store into the preferences all this data so that we can reload when necessary
-                    User.uFirstName = name;
-                    User.uLastName  = name;
-                    User.uEmail = accountName;
-                    User me = User.getUser();
-                    me.saveToPreferences();
-
                     setResult(RESULT_OK, intent);
                     finish();
                 }

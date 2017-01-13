@@ -19,20 +19,19 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyA_zbauzXhhqQpjFyoxdfymvtRHIAJFYdE" />
 
-        <activity android:name=".Activity.LoginActivity" android:theme="@style/LoginTheme"/>
+        <activity android:name=".Activity.StartUpActivity" android:theme="@style/LoginTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".Activity.ButtonActivity"></activity>
         <activity android:name=".Activity.MapActivity"></activity>
 
-        <activity android:name=".Authentication.SignInActivity" android:theme="@style/LoginTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
-
+        <activity android:name=".Authentication.SignInActivity" android:theme="@style/LoginTheme"/>
         <activity android:name=".Authentication.SignUpActivity" android:theme="@style/LoginTheme" />
-
+        <activity android:name=".Activity.OopsActivity" android:theme="@style/LoginTheme" />
         <service android:name=".Authentication.LockerAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

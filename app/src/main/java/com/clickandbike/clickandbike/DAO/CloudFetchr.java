@@ -83,7 +83,7 @@ public class CloudFetchr {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Android");
             connection.setRequestProperty("Connection", "close");
-            connection.setConnectTimeout(1000);
+            connection.setConnectTimeout(2000);
             connection.connect();
             if (connection.getResponseCode() == 204 && connection.getContentLength() == 0) {
                 if (DEBUG_MODE) Log.i(TAG, "Connected !");

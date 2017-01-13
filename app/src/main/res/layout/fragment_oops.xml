@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:background="@drawable/grass_texture"
+android:padding="30dp"
+android:orientation="vertical"
+    android:id="@+id/fragment_oops_LinearLayout">
+
+<ImageView
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:id="@+id/fragment_oops_ImageView_error"
+    android:layout_weight="3"
+    android:clickable="true"
+    android:src="@drawable/oops" />
+
+<TextView
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="Medium Text"
+    android:id="@+id/fragment_oops_TextView_message"
+    android:layout_weight="1"
+    android:gravity="bottom|center_horizontal"
+    android:textColor="@color/colorWhite"
+    android:textStyle="bold" />
+
+<TextView
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="Try again"
+    android:id="@+id/fragment_oops_TextView_retry"
+    android:layout_weight="1"
+    android:gravity="center_horizontal"
+    android:textColor="@color/colorWhite" />
+</LinearLayout>
