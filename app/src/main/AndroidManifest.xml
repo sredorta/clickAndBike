@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -31,6 +32,8 @@
 
         <activity android:name=".Authentication.SignInActivity" android:theme="@style/LoginTheme"/>
         <activity android:name=".Authentication.SignUpActivity" android:theme="@style/LoginTheme" />
+        <activity android:name=".Authentication.LogInActivity" android:theme="@style/LoginTheme"/>
+
         <activity android:name=".Activity.OopsActivity" android:theme="@style/LoginTheme" />
         <service android:name=".Authentication.LockerAuthenticatorService">
             <intent-filter>

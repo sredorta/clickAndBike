@@ -1,5 +1,7 @@
 package com.clickandbike.clickandbike.Fragment;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -20,8 +22,12 @@ import com.clickandbike.clickandbike.Activity.MapActivity;
 import com.clickandbike.clickandbike.Activity.OopsActivity;
 import com.clickandbike.clickandbike.Authentication.SignInActivity;
 import com.clickandbike.clickandbike.DAO.CloudFetchr;
+import com.clickandbike.clickandbike.DAO.JsonItem;
 import com.clickandbike.clickandbike.R;
 import com.clickandbike.clickandbike.Singleton.User;
+import com.clickandbike.clickandbike.Toolbox.Toolbox;
+
+import static com.clickandbike.clickandbike.Authentication.AccountGeneral.sServerAuthenticate;
 
 
 /**
@@ -40,6 +46,7 @@ public class StartUpFragment extends Fragment {
     User me;                                                    //User singleton
     private final int REQ_SIGNIN = 2;                           //Identifier for the request to sign-in
     private final int REQ_OOPS = 3;                             //Identifier for the request to show oops
+    public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
 
     // Constructor
     public static StartUpFragment newInstance() {
@@ -54,6 +61,8 @@ public class StartUpFragment extends Fragment {
         //Init the preferences (this can only be done once !)
         me = User.getUser();
         me.init(getContext());
+        ////////////////////////////////Debug !!!
+        User.uEmail = "toto";
 
     }
 
@@ -75,7 +84,7 @@ public class StartUpFragment extends Fragment {
         dialog = new ProgressDialog(getContext());
         dialog.setMessage("Checking...");
         dialog.show();
-        new CloudTask().execute();
+        new CheckerTask().execute();
     }
 
 
@@ -112,15 +121,16 @@ public class StartUpFragment extends Fragment {
         Log.i(TAG, "onPause");
     }
 
-    private class CloudTask extends AsyncTask<Void,Void,Boolean> {
+    private class CheckerTask extends AsyncTask<Void,Void,Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
             statusInternet = CloudFetchr.isNetworkConnected();
             statusCloud = new CloudFetchr().isCloudConnected();
-            //For the moment we only check token not null... but we need to do a query to validate token !
-            if (me.uToken != null) {
-                statusUser = true;
-            }
+
+            //Debug only
+            //statusInternet = true;
+            //statusCloud = true;
+
             return true;
         }
 
@@ -143,23 +153,22 @@ public class StartUpFragment extends Fragment {
                 Intent oops = new Intent(getContext(), OopsActivity.class);
                 oops.putExtra(OopsFragment.ARG_MESSAGE, message);
                 startActivityForResult(oops, REQ_OOPS);
-            }
-            if(statusCloud && statusInternet && !statusUser) {
+            } else {
+                //Check that we have an account and is valid
                 Intent signin = new Intent(getContext(), SignInActivity.class);
+                //We ask to check if there is a valid account, and if not start SignInActivity
+                if (User.uEmail != null)
+                    signin.putExtra(ARG_ACCOUNT_NAME, User.uEmail);
+                Log.i(TAG,"Extras for signin:");
+                Toolbox.dumpIntent(signin);
                 startActivityForResult(signin,REQ_SIGNIN);
-                //Need to Start SignIn activity as credentials are not valid
-            }
-
-            if(statusCloud && statusInternet && statusUser) {
-                Toast.makeText(getActivity(),"Valid credentials !",Toast.LENGTH_SHORT).show();
-                //Need to start next activity here !!!!
-                Intent map = new Intent(getContext(), MapActivity.class);
-                startActivity(map);
-                getActivity().finish();      //need to exit current activity
-
             }
         }
     }
+
+
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -187,8 +196,10 @@ public class StartUpFragment extends Fragment {
         } else if (requestCode == REQ_OOPS && resultCode == Activity.RESULT_OK) {
             //When we come back from Oops we restart everything
             startChecker();
-        }
-        else
+        } else if (requestCode == REQ_OOPS && resultCode == Activity.RESULT_CANCELED){
+            //If the Ooops was canceled then exit the application
+            getActivity().finish();
+        } else
             super.onActivityResult(requestCode, resultCode, data);
 
     }

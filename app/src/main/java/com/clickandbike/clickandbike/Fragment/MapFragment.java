@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,7 +37,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by sredorta on 11/8/2016.
  */
-public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarkerClickListener {
+public class MapFragment extends Fragment {
+//        SupportMapFragment implements GoogleMap.OnMarkerClickListener {
     // Create client for google API
     private GoogleApiClient mClient;
     private Location mCurrentLocation;
@@ -51,7 +53,7 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
     private LatLng myPoint;
     private Boolean isFirstTime = true;
 
-
+/*
     @Override
     public boolean onMarkerClick(Marker marker) {
         if (marker.equals(stationMarker)) {
@@ -59,7 +61,7 @@ public class MapFragment extends SupportMapFragment implements GoogleMap.OnMarke
         }
         return false;
     }
-
+*/
 
 /*
     @Override

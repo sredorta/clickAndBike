@@ -1,18 +1,18 @@
-package com.clickandbike.clickandbike.Activity;
+package com.clickandbike.clickandbike.Authentication;
 
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.clickandbike.clickandbike.Activity.SingleFragmentActivity;
 import com.clickandbike.clickandbike.Fragment.OopsFragment;
-import com.clickandbike.clickandbike.Fragment.StartUpFragment;
 
 /**
- * Created by sredorta on 1/13/2017.
+ * Created by sredorta on 1/16/2017.
  */
-public class OopsActivity extends SingleFragmentActivity {
+public class LogInActivity extends SingleFragmentActivity {
     @Override
     public Fragment createFragment() {
-        return OopsFragment.newInstance();
+        return LogInFragment.newInstance();
     }
     //Finish if we backpressed here
     @Override

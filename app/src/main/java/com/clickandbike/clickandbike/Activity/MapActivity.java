@@ -20,7 +20,7 @@ public class MapActivity extends SingleFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+/*        int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
         if(errorCode != ConnectionResult.SUCCESS) {
             Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode,this,REQUEST_ERROR,
@@ -30,6 +30,7 @@ public class MapActivity extends SingleFragmentActivity {
                             finish();
                         }
                     });
-        }
+
+        }*/
     }
 }

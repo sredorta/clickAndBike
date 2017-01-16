@@ -18,10 +18,13 @@ public class User {
     private final String TAG = this.getClass().getSimpleName() + "::";
 
     private Context mContext;
+    public static Integer uId;                  // Id as in the database (used as username)
     public static String uFirstName;            // FirstName of the User
     public static String uLastName;             // FirstName of the User
+    public static String uPhone;                // Phone of the User
     public static String uEmail;                // Email of the User
-    public static String uToken;                // Last User token
+    public static String uPassword;
+    public static String uToken;                // Token is handled by account manager !!!!!!!!
     public static Location uLocation;           // Last location of the User
 
 
@@ -31,7 +34,7 @@ public class User {
     //Private constructor to avoid external calls
     private User() {}
 
-    //Method to get the only instance of Locker
+    //Method to get the only instance of User
     public static User getUser() {
         return mUser;
     }
@@ -43,16 +46,24 @@ public class User {
         me.getFromPreferences();
     }
 
+    public void setUserName(String email_or_phone) {
+        //
+    }
+
     public void saveToPreferences() {
         QueryPreferences.setPreference(mContext,QueryPreferences.PREFERENCE_USER_FIRST_NAME, User.uFirstName);
         QueryPreferences.setPreference(mContext,QueryPreferences.PREFERENCE_USER_LAST_NAME, User.uLastName);
         QueryPreferences.setPreference(mContext,QueryPreferences.PREFERENCE_USER_EMAIL, User.uEmail);
+        QueryPreferences.setPreference(mContext,QueryPreferences.PREFERENCE_USER_PHONE, User.uPhone);
+        //We don't save password but Token !
     }
 
     public void getFromPreferences() {
         User.uFirstName = QueryPreferences.getPreference(mContext,QueryPreferences.PREFERENCE_USER_FIRST_NAME);
         User.uLastName = QueryPreferences.getPreference(mContext,QueryPreferences.PREFERENCE_USER_LAST_NAME);
         User.uEmail = QueryPreferences.getPreference(mContext,QueryPreferences.PREFERENCE_USER_EMAIL);
+        User.uPhone = QueryPreferences.getPreference(mContext,QueryPreferences.PREFERENCE_USER_PHONE);
+
     }
 
 

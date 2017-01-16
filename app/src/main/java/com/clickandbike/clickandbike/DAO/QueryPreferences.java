@@ -14,7 +14,8 @@ public class QueryPreferences {
     public static final String PREFERENCE_USER_FIRST_NAME = "first_name";
     public static final String PREFERENCE_USER_LAST_NAME = "last_name";
     public static final String PREFERENCE_USER_EMAIL = "email";
-    public static final String PREFERENCE_USER_TOKEN = "token";
+    public static final String PREFERENCE_USER_PHONE = "phone";
+
 
     public static void setPreference(Context context, String preference, String value) {
         if (DEBUG_MODE) Log.i(TAG, "Stored into preferences: " + preference + " : " + value);

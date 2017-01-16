@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.util.Log;
 
 
+import com.clickandbike.clickandbike.Singleton.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +43,7 @@ public class CloudFetchr {
     private static final String PHP_USER_REGISTERED = "locker.users.check.php";                 // Params required : user,password,user_table
     private static final String PHP_USER_SIGNIN = "locker.users.signin.php";                    // Params required : user,password,user_table and returns token
     private static final String PHP_USER_SIGNUP = "locker.users.signup.php";                    // Params required : user,password,email,user_table and returns token
+    private static final String PHP_USER_TOKEN = "locker.users.checktoken.php";                 // Params required : email,token and returns if token is valid or not
 
     private static final String PHP_STATION_CHECK = "locker.stations.check.php";                // Params required : name,table_stations
     private static final String PHP_STATION_ADD = "locker.stations.add.php";                    // Params required : name,table_stations + optional
@@ -284,11 +287,12 @@ public class CloudFetchr {
         return (networkAnswer.getResult());
     }
 
-    //Checks if the user is registered and returns token
-    public JsonItem userSignInDetails(String name,  String password, String table) {
+    //Checks if the user is registered and returns all Details
+    public JsonItem userSignInDetails(String phone_or_email,  String password, String table) {
         this.SEND_METHOD="POST";
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("name", name);
+        parameters.put("phone", phone_or_email);
+        parameters.put("email", phone_or_email);
         parameters.put("table_users", table);
         parameters.put("password", password);
 
@@ -296,17 +300,17 @@ public class CloudFetchr {
         return getJSON(url,parameters);
     }
 
-    //Checks if the user is registered and returns token
-    public String userSignIn(String name,  String password, String table) {
-        JsonItem networkAnswer = userSignInDetails(name,password,table);
+    //Checks if the user is registered and returns token only
+    public String userSignIn(String phone_or_email,  String password, String table) {
+        JsonItem networkAnswer = userSignInDetails(phone_or_email,password,table);
         return (networkAnswer.getToken());
     }
 
     //Checks if the user is registered and returns all details of the answer with full JsonItem
-    public JsonItem userSignUpDetails(String name, String email, String password, String table) {
+    public JsonItem userSignUpDetails(String phone, String email, String password, String table) {
         this.SEND_METHOD="POST";
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("name", name);
+        parameters.put("phone", phone);
         parameters.put("email", email);
         parameters.put("password", password);
         parameters.put("table_users", table);
@@ -315,10 +319,43 @@ public class CloudFetchr {
         return getJSON(url,parameters);
     }
     //Checks if the user is registered and returns token
-    public String userSignUp(String name, String email, String password, String table) {
-        JsonItem networkAnswer = userSignUpDetails(name,email,password,table);
+    public String userSignUp(String phone, String email, String password, String table) {
+        JsonItem networkAnswer = userSignUpDetails(phone,email,password,table);
         return (networkAnswer.getToken());
     }
+
+
+
+    //Checks if the user is registered and returns all (non critical) details of the answer with full JsonItem
+    public Boolean userIsTokenValid(String email, String token, String table) {
+        this.SEND_METHOD="POST";
+       HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("email", email);
+        parameters.put("token", token);
+        parameters.put("table_users", table);
+
+        URL url = buildUrl(PHP_USER_TOKEN,parameters);
+        JsonItem networkAnswer = getJSON(url,parameters);
+        return networkAnswer.getResult();
+
+    }
+    //Checks if the user is registered and returns all (non critical) details of the answer with full JsonItem
+/*    public JsonItem getUserDetails(String email, String table) {
+        this.SEND_METHOD="POST";
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("email", email);
+        parameters.put("token", User.uToken);
+        parameters.put("table_users", table);
+
+        URL url = buildUrl(PHP_USER_DETAILS,parameters);
+        return getJSON(url,parameters);
+    }
+    //Checks if the user is registered and returns token
+    public String isTokenValid(String name, String email, String password, String table) {
+        JsonItem networkAnswer = getUserDetails(name,email,password,table);
+        return (networkAnswer.getToken());
+    }
+*/
 /*
     public Boolean registerStation() {
         this.SEND_METHOD="POST";
