@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/fragment_account_imageView_avatar"
+            android:layout_weight="1"
+            android:src="@drawable/user_default"
+            android:scaleType="fitCenter" />
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:layout_marginLeft="20dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text=" here the name"
+                android:id="@+id/fragment_account_textView_user"
+                android:gravity="left|bottom"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/abc_text_size_small_material"
+                android:layout_weight="1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/fragment_account_textView_account"
+                android:layout_weight="1"
+                android:gravity="top|left"
+                android:textColor="@color/colorWhite"
+                android:textStyle="italic"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

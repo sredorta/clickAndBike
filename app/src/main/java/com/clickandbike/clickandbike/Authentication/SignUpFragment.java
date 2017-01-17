@@ -36,6 +36,8 @@ public class SignUpFragment extends Fragment {
     private static Boolean DEBUG_MODE = true;
     private String TAG = getClass().getSimpleName() + "::";
     private String mAccountType;
+    TextView firstNameTextView;
+    TextView lastNameTextView;
     TextView phoneTextView;
     TextView accountEmailTextView;
     TextView accountPasswordTextView;
@@ -58,6 +60,8 @@ public class SignUpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_signup, container, false);
         final Button submitButton = (Button) v.findViewById(R.id.fragment_signup_Button_submit);
+        firstNameTextView = (TextView) v.findViewById(R.id.fragment_signup_EditText_FirstName);
+        lastNameTextView = (TextView) v.findViewById(R.id.fragment_signup_EditText_LastName);
         phoneTextView =             (TextView) v.findViewById(R.id.fragment_signup_EditText_phone);
         accountEmailTextView =      (TextView) v.findViewById(R.id.fragment_signup_EditText_email);
         accountPasswordTextView  = (TextView) v.findViewById(R.id.fragment_signup_EditText_password);
@@ -68,6 +72,10 @@ public class SignUpFragment extends Fragment {
                 boolean fieldsOk = true;
                 //Here we need to check the parameters and we should most probably change the color and display a snackbar
                 // To be done later !!!!!!!!!!!!!
+                if (firstNameTextView.getText().toString() == null)
+                    fieldsOk = false;
+                if (lastNameTextView.getText().toString() == null)
+                    fieldsOk = false;
                 if (!User.checkPasswordInput(accountPasswordTextView.getText().toString())) {
                     fieldsOk = false;
                     accountPasswordTextView.setText("");
@@ -92,16 +100,15 @@ public class SignUpFragment extends Fragment {
     private void createAccount() {
         // Validation!
         new AsyncTask<String, Void, Intent>() {
-
+            String accountFirstName = firstNameTextView.getText().toString().trim();
+            String accountLastName = lastNameTextView.getText().toString().trim();
             String accountPhone = phoneTextView.getText().toString().trim();
             String accountEmail = accountEmailTextView.getText().toString().trim();
             String accountPassword = accountPasswordTextView.getText().toString().trim();
 
             @Override
             protected Intent doInBackground(String... params) {
-
                 if (DEBUG_MODE) Log.i(TAG, "Started authenticating");
-
                 authtoken = null;
                 Bundle data = new Bundle();
                 try {
@@ -128,8 +135,8 @@ public class SignUpFragment extends Fragment {
                  //Store into the preferences all this data so that we can reload when necessary
 
                 //updateAccountData(accountEmail,accountPhone);
-                User.uFirstName = "empty";
-                User.uLastName  = "empty";
+                User.uFirstName = accountFirstName;
+                User.uLastName  = accountLastName;
                 User.uAccountName = accountEmail;
                 User.uEmail = accountEmail;
                 User.uPhone = accountPhone;

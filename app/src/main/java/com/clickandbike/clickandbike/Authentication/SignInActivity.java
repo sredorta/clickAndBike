@@ -47,6 +47,9 @@ public class SignInActivity extends android.accounts.AccountAuthenticatorActivit
     public final static String PARAM_USER_PASS = "USER_PASS";
     public final static String PARAM_USER_EMAIL = "USER_EMAIL";
     public final static String PARAM_USER_PHONE = "USER_PHONE";
+    public final static String PARAM_USER_FIRST_NAME = "USER_FIRST_NAME";
+    public final static String PARAM_USER_LAST_NAME = "USER_LAST_NAME";
+
     private final int REQ_LOGIN = 1;
 
 

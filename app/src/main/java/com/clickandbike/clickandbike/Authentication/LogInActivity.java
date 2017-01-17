@@ -1,6 +1,7 @@
 package com.clickandbike.clickandbike.Authentication;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -10,7 +11,7 @@ import com.clickandbike.clickandbike.Fragment.OopsFragment;
 /**
  * Created by sredorta on 1/16/2017.
  */
-public class LogInActivity extends SingleFragmentActivity {
+public class LogInActivity extends SingleFragmentActivity implements AccountFragment.OnFragmentInteractionListener{
     @Override
     public Fragment createFragment() {
         return LogInFragment.newInstance();
@@ -22,4 +23,15 @@ public class LogInActivity extends SingleFragmentActivity {
         setResult(RESULT_CANCELED);
         finish();
     }
+
+/*    @Override
+    public void messageFromParentFragment(Uri uri) {
+        Log.i("TAG", "received communication from parent fragment");
+    }*/
+
+    @Override
+    public void messageFromChildFragment(Uri uri) {
+        Log.i("TAG", "received communication from child fragment");
+    }
+
 }

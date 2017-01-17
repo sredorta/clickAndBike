@@ -14,6 +14,7 @@ package com.clickandbike.clickandbike.Authentication;
         import android.os.Bundle;
         import android.support.annotation.Nullable;
         import android.support.v4.app.Fragment;
+        import android.support.v4.app.FragmentTransaction;
         import android.util.Log;
         import android.view.LayoutInflater;
         import android.view.View;
@@ -137,6 +138,14 @@ public class LogInFragment extends Fragment {
         return v;
     }
 
+    //This is to inflate the Child fragment that contains the account details
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        Fragment childFragment = new AccountFragment();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container_child, childFragment).commit();
+    }
+
     //When we come back from new account creation we fall here
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -248,6 +257,8 @@ public class LogInFragment extends Fragment {
         Log.i(TAG, "Storing all user data in the account...");
         mAccountManager.setUserData(account,SignInActivity.PARAM_USER_EMAIL, User.uEmail);
         mAccountManager.setUserData(account,SignInActivity.PARAM_USER_PHONE, User.uPhone);
+        mAccountManager.setUserData(account, SignInActivity.PARAM_USER_FIRST_NAME, User.uFirstName);
+        mAccountManager.setUserData(account, SignInActivity.PARAM_USER_LAST_NAME, User.uLastName);
 
     }
     //Removes all accounts except the one we have just created

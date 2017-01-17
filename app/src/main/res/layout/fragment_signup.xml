@@ -6,6 +6,19 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/fragment_signup_EditText_FirstName"
+        android:layout_gravity="center_horizontal"
+        android:hint="first name" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_signup_EditText_LastName"
+        android:hint="last name" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/fragment_signup_EditText_email"
         android:hint="email"
         android:inputType="textEmailAddress" />
