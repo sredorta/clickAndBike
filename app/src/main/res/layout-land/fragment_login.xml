@@ -41,7 +41,7 @@ android:layout_height="match_parent"
                 android:inputType="textPersonName"
                 android:ems="10"
                 android:id="@+id/fragment_login_EditText_user"
-                android:hint="user name"
+                android:hint="email or phone"
                 android:backgroundTint="@color/colorWhite"
                 android:textColor="@color/colorWhite"
                 android:layout_weight="1"
@@ -57,7 +57,8 @@ android:layout_height="match_parent"
                 android:textColor="@color/colorWhite"
                 android:backgroundTint="@color/colorWhite"
                 android:layout_weight="1"
-                android:gravity="bottom" />
+                android:gravity="bottom"
+                android:password="true" />
 
             <Button
                 android:layout_width="fill_parent"

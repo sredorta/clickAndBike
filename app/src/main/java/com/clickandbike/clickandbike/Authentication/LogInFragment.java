@@ -3,9 +3,14 @@ package com.clickandbike.clickandbike.Authentication;
 
         import android.accounts.Account;
         import android.accounts.AccountManager;
+        import android.accounts.AccountManagerFuture;
+        import android.accounts.AuthenticatorException;
+        import android.accounts.OperationCanceledException;
         import android.app.Activity;
         import android.content.Intent;
+        import android.graphics.Color;
         import android.os.AsyncTask;
+        import android.os.Build;
         import android.os.Bundle;
         import android.support.annotation.Nullable;
         import android.support.v4.app.Fragment;
@@ -14,6 +19,7 @@ package com.clickandbike.clickandbike.Authentication;
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.Button;
+        import android.widget.EditText;
         import android.widget.TextView;
         import android.widget.Toast;
 
@@ -23,6 +29,12 @@ package com.clickandbike.clickandbike.Authentication;
         import com.clickandbike.clickandbike.R;
         import com.clickandbike.clickandbike.Singleton.User;
         import com.clickandbike.clickandbike.Toolbox.Toolbox;
+
+        import java.io.IOException;
+        import java.util.concurrent.Executor;
+        import java.util.concurrent.ExecutorService;
+        import java.util.concurrent.Executors;
+        import java.util.concurrent.TimeUnit;
 
         import static com.clickandbike.clickandbike.Authentication.AccountGeneral.sServerAuthenticate;
         import static com.clickandbike.clickandbike.Authentication.SignInActivity.ARG_ACCOUNT_TYPE;
@@ -84,16 +96,23 @@ public class LogInFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
 
-        final TextView userTextView = (TextView) v.findViewById(R.id.fragment_login_EditText_user);
-        final TextView passTextView = (TextView) v.findViewById(R.id.fragment_login_EditText_password);
-        userTextView.setText(User.uFirstName);
+        final EditText userTextView = (EditText) v.findViewById(R.id.fragment_login_EditText_user);
+        final EditText passTextView = (EditText) v.findViewById(R.id.fragment_login_EditText_password);
+        //We recover from preferences and set default user name
+        userTextView.setText(User.uAccountName);
 
         //Re-enter credentials
         v.findViewById(R.id.fragment_login_Button_connect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (DEBUG_MODE) Log.i(TAG, "Submitting credentials to account manager !");
-                submit(v);
+                if (User.checkPasswordInput(passTextView.getText().toString())) {
+                    submit(userTextView.getText().toString(), passTextView.getText().toString());
+                    passTextView.setText("");
+                } else {
+                    passTextView.setText("");
+                    Toast.makeText(getActivity(),"Password must be at least 8 chars !", Toast.LENGTH_LONG).show();
+                }
             }
         });
         //Create new user account
@@ -132,9 +151,7 @@ public class LogInFragment extends Fragment {
 
 
     //Submits the credentials we have introduced
-    public void submit(View v) {
-        final String userName = ((TextView) v.findViewById(R.id.fragment_login_EditText_user)).getText().toString();
-        final String userPass = ((TextView) v.findViewById(R.id.fragment_login_EditText_password)).getText().toString();
+    public void submit(final String userName, final String userPass) {
 
         //final String accountType = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
         //accountType should not be null here
@@ -162,7 +179,7 @@ public class LogInFragment extends Fragment {
                 } catch (Exception e) {
                     data.putString(KEY_ERROR_MESSAGE, e.getMessage());
                 }
-                //Check if we got a token... if it's null it means that we could not signUp
+                //Check if we got a token... if it's null it means that we could not LogIn
                 if (authtoken == null) {
                     //Redo the query to get server answer with full details
                     JsonItem item = new CloudFetchr().userSignInDetails(userName, userPass,"users");
@@ -178,6 +195,11 @@ public class LogInFragment extends Fragment {
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
                     Toast.makeText(getActivity().getBaseContext(), intent.getStringExtra(KEY_ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
                 } else {
+                    //Update the User singleton
+                    User.setEmailOrPhone(userName);
+                    User.uAccountName = userName;
+                    User.uPassword = userPass;
+
                     finishLogin(intent);
                 }
             }
@@ -209,10 +231,80 @@ public class LogInFragment extends Fragment {
             if (DEBUG_MODE) Log.i(TAG,  "finishLogin > setPassword");
             mAccountManager.setPassword(account, accountPassword);
         }
+
+        Log.i(TAG, "We are supposed to be saving user data to the account here !");
+        updateAccountData(account);
+        purgeAccounts();
+        User me = User.getUser();
+        me.saveToPreferences();
         //Return all results to the SignInActivity
 //        setAccountAuthenticatorResult(intent.getExtras());
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
+    }
+
+    // Updates the Account with all USER parameters
+    private void updateAccountData(Account account) {
+        Log.i(TAG, "Storing all user data in the account...");
+        mAccountManager.setUserData(account,SignInActivity.PARAM_USER_EMAIL, User.uEmail);
+        mAccountManager.setUserData(account,SignInActivity.PARAM_USER_PHONE, User.uPhone);
+
+    }
+    //Removes all accounts except the one we have just created
+    private void purgeAccounts() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        //Find if there is an account with the correct accountName and get its token
+        for (Account account : mAccountManager.getAccounts()) {
+            Boolean needToRemove = false;
+            Log.i(TAG, "Account found:" + account.name);
+            Log.i(TAG, "    PARAM_USER_EMAIL: " + mAccountManager.getUserData(account, SignInActivity.PARAM_USER_EMAIL));
+            Log.i(TAG, "    PARAM_USER_PHONE: " + mAccountManager.getUserData(account, SignInActivity.PARAM_USER_PHONE));
+            if ((mAccountManager.getUserData(account, SignInActivity.PARAM_USER_EMAIL)== null) ||
+                    (mAccountManager.getUserData(account, SignInActivity.PARAM_USER_PHONE)== null))
+                        needToRemove = true;
+            if (!needToRemove) {
+                if (mAccountManager.getUserData(account, SignInActivity.PARAM_USER_EMAIL).equals(User.uEmail) &&
+                        (mAccountManager.getUserData(account, SignInActivity.PARAM_USER_PHONE).equals(User.uPhone))) {
+                        needToRemove = false;
+                } else {
+                    needToRemove = true;
+                    //Add in the queue to remove the account from the Server also
+                    final String email = mAccountManager.getUserData(account, SignInActivity.PARAM_USER_EMAIL);
+                    final String phone = mAccountManager.getUserData(account, SignInActivity.PARAM_USER_PHONE);
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            new CloudFetchr().removeUser(email, phone,"users");
+                        }
+                    });
+                }
+            }
+            if (needToRemove) {
+                        Boolean isDone = false;
+                        String name = account.name;
+                        if (Build.VERSION.SDK_INT<22) {
+                            //@SuppressWarnings("deprecation")
+                            final AccountManagerFuture<Boolean> booleanAccountManagerFuture = mAccountManager.removeAccount(account, null, null);
+                            try {
+                              isDone = booleanAccountManagerFuture.getResult(1, TimeUnit.SECONDS);
+                            } catch (OperationCanceledException e) {
+                                Log.i(TAG, "Caught exception : " + e);
+                            } catch (IOException e) {
+                                Log.i(TAG, "Caught exception : " + e);
+                            } catch (AuthenticatorException e) {
+                                Log.i(TAG, "Caught exception : " + e);
+                            }
+                            if (isDone) Log.i(TAG, "Successfully removed account : " + name);
+
+                        } else {
+                            isDone = mAccountManager.removeAccountExplicitly(account);
+                            if (isDone) Log.i(TAG, "Successfully removed account : " + name);
+                        }
+
+            }
+        }
+        executor.shutdown();
+
     }
 
 }

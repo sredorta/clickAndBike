@@ -13,6 +13,7 @@ public class QueryPreferences {
 
     public static final String PREFERENCE_USER_FIRST_NAME = "first_name";
     public static final String PREFERENCE_USER_LAST_NAME = "last_name";
+    public static final String PREFERENCE_USER_ACCOUNT_NAME = "account";
     public static final String PREFERENCE_USER_EMAIL = "email";
     public static final String PREFERENCE_USER_PHONE = "phone";
 

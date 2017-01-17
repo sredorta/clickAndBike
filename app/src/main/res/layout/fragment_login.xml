@@ -43,7 +43,7 @@
                 android:inputType="textPersonName"
                 android:ems="10"
                 android:id="@+id/fragment_login_EditText_user"
-                android:hint="user"
+                android:hint="email or phone"
                 android:drawableRight="@android:drawable/ic_delete"
                 android:backgroundTint="@color/colorWhite"
                 android:textColor="@color/colorWhite"
@@ -62,7 +62,8 @@
                 android:layout_alignBottom="@+id/button2"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:password="true" />
 
             <Button
                 android:layout_width="fill_parent"

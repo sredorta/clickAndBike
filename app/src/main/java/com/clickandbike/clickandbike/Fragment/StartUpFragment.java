@@ -61,9 +61,6 @@ public class StartUpFragment extends Fragment {
         //Init the preferences (this can only be done once !)
         me = User.getUser();
         me.init(getContext());
-        ////////////////////////////////Debug !!!
-        User.uEmail = "toto";
-
     }
 
     @Nullable
@@ -139,7 +136,6 @@ public class StartUpFragment extends Fragment {
             //Remove the dialog
             dialog.cancel();
             dialog.dismiss();
-
             message = null;
             //Analyze the results
             if (!statusInternet) {
@@ -157,8 +153,8 @@ public class StartUpFragment extends Fragment {
                 //Check that we have an account and is valid
                 Intent signin = new Intent(getContext(), SignInActivity.class);
                 //We ask to check if there is a valid account, and if not start SignInActivity
-                if (User.uEmail != null)
-                    signin.putExtra(ARG_ACCOUNT_NAME, User.uEmail);
+                if (User.uAccountName != null)
+                    signin.putExtra(ARG_ACCOUNT_NAME, User.uAccountName);
                 Log.i(TAG,"Extras for signin:");
                 Toolbox.dumpIntent(signin);
                 startActivityForResult(signin,REQ_SIGNIN);
@@ -175,7 +171,6 @@ public class StartUpFragment extends Fragment {
         if (DEBUG_MODE) Log.i(TAG, "onActivityResult");
         if (DEBUG_MODE) Log.i(TAG, "requestCode was: " + requestCode);
         if (DEBUG_MODE) Log.i(TAG, "resultCode is:" + resultCode);
-
         if (requestCode == REQ_SIGNIN && resultCode == Activity.RESULT_OK) {
             // The sign up activity returned that the user has successfully created an account
             Intent map = new Intent(getContext(), MapActivity.class);

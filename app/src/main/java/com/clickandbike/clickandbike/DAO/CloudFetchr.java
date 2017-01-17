@@ -40,7 +40,7 @@ public class CloudFetchr {
     private static final String URI_BASE_GOOGLE = "http://clients3.google.com/generate_204";    //Only required to check if internet is available
     private static final String URI_BASE = "http://10.0.2.2/example1/api/";
     private static final String PHP_CONNECTION_CHECK = "locker.connection.check.php";           // Params required : none
-    private static final String PHP_USER_REGISTERED = "locker.users.check.php";                 // Params required : user,password,user_table
+    private static final String PHP_USER_REMOVE = "locker.users.remove.php";                    // Params required : phone,email,user_table
     private static final String PHP_USER_SIGNIN = "locker.users.signin.php";                    // Params required : user,password,user_table and returns token
     private static final String PHP_USER_SIGNUP = "locker.users.signup.php";                    // Params required : user,password,email,user_table and returns token
     private static final String PHP_USER_TOKEN = "locker.users.checktoken.php";                 // Params required : email,token and returns if token is valid or not
@@ -275,26 +275,26 @@ public class CloudFetchr {
     }
 
     //Checks if the station is registered
-    public Boolean isUserRegistered(String name,  String password, String table) {
+    public Boolean removeUser(String email,  String phone, String table) {
         this.SEND_METHOD="POST";
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("name", name);
+        parameters.put("email", email);
+        parameters.put("phone", phone);
         parameters.put("table_users", table);
-        parameters.put("password", password);
 
-        URL url = buildUrl(PHP_USER_REGISTERED,parameters);
+        URL url = buildUrl(PHP_USER_REMOVE,parameters);
         JsonItem networkAnswer = getJSON(url,parameters);
         return (networkAnswer.getResult());
     }
 
     //Checks if the user is registered and returns all Details
-    public JsonItem userSignInDetails(String phone_or_email,  String password, String table) {
+    public JsonItem userSignInDetails(String email_or_phone,  String password, String table) {
         this.SEND_METHOD="POST";
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("phone", phone_or_email);
-        parameters.put("email", phone_or_email);
-        parameters.put("table_users", table);
+        parameters.put("email_or_phone", email_or_phone);
         parameters.put("password", password);
+        parameters.put("table_users", table);
+        //Password needs to be sha1
 
         URL url = buildUrl(PHP_USER_SIGNIN,parameters);
         return getJSON(url,parameters);
@@ -339,35 +339,6 @@ public class CloudFetchr {
         return networkAnswer.getResult();
 
     }
-    //Checks if the user is registered and returns all (non critical) details of the answer with full JsonItem
-/*    public JsonItem getUserDetails(String email, String table) {
-        this.SEND_METHOD="POST";
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("email", email);
-        parameters.put("token", User.uToken);
-        parameters.put("table_users", table);
 
-        URL url = buildUrl(PHP_USER_DETAILS,parameters);
-        return getJSON(url,parameters);
-    }
-    //Checks if the user is registered and returns token
-    public String isTokenValid(String name, String email, String password, String table) {
-        JsonItem networkAnswer = getUserDetails(name,email,password,table);
-        return (networkAnswer.getToken());
-    }
-*/
-/*
-    public Boolean registerStation() {
-        this.SEND_METHOD="POST";
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("name", Locker.lName);
-        parameters.put("table_stations", Locker.lTable);
-        parameters.put("capacity", String.valueOf(Locker.lCapacity));
-
-        URL url = buildUrl(PHP_STATION_ADD,parameters);
-        JsonItem networkAnswer = getJSON(url,parameters);
-        return (networkAnswer.getResult());
-    }
-*/
 }
 

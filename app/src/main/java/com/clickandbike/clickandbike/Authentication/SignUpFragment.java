@@ -1,5 +1,6 @@
 package com.clickandbike.clickandbike.Authentication;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +27,8 @@ import com.clickandbike.clickandbike.Singleton.User;
 import static com.clickandbike.clickandbike.Authentication.AccountGeneral.sServerAuthenticate;
 import static com.clickandbike.clickandbike.Authentication.SignInActivity.ARG_ACCOUNT_TYPE;
 import static com.clickandbike.clickandbike.Authentication.SignInActivity.KEY_ERROR_MESSAGE;
+import static com.clickandbike.clickandbike.Authentication.SignInActivity.PARAM_USER_EMAIL;
+import static com.clickandbike.clickandbike.Authentication.SignInActivity.PARAM_USER_PHONE;
 import static com.clickandbike.clickandbike.Authentication.SignInActivity.PARAM_USER_PASS;
 
 //Create new user account activity
@@ -34,7 +37,7 @@ public class SignUpFragment extends Fragment {
     private String TAG = getClass().getSimpleName() + "::";
     private String mAccountType;
     TextView phoneTextView;
-    TextView accountNameTextView;
+    TextView accountEmailTextView;
     TextView accountPasswordTextView;
     private String authtoken;
 
@@ -56,27 +59,42 @@ public class SignUpFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_signup, container, false);
         final Button submitButton = (Button) v.findViewById(R.id.fragment_signup_Button_submit);
         phoneTextView =             (TextView) v.findViewById(R.id.fragment_signup_EditText_phone);
-        accountNameTextView =      (TextView) v.findViewById(R.id.fragment_signup_EditText_email);
+        accountEmailTextView =      (TextView) v.findViewById(R.id.fragment_signup_EditText_email);
         accountPasswordTextView  = (TextView) v.findViewById(R.id.fragment_signup_EditText_password);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount();
+                boolean fieldsOk = true;
+                //Here we need to check the parameters and we should most probably change the color and display a snackbar
+                // To be done later !!!!!!!!!!!!!
+                if (!User.checkPasswordInput(accountPasswordTextView.getText().toString())) {
+                    fieldsOk = false;
+                    accountPasswordTextView.setText("");
+                }
+
+                if (!User.checkEmailInput(accountEmailTextView.getText().toString())) {
+                    fieldsOk = false;
+                    accountEmailTextView.setText("");
+                }
+                if (!User.checkPhoneInput(phoneTextView.getText().toString())) {
+                    fieldsOk = false;
+                    phoneTextView.setText("");
+                }
+                //Create the account only if Fields meet criteria
+                if (fieldsOk) createAccount();
             }
         });
 
         return v;
     }
 
-
-
     private void createAccount() {
         // Validation!
         new AsyncTask<String, Void, Intent>() {
 
             String accountPhone = phoneTextView.getText().toString().trim();
-            String accountName = accountNameTextView.getText().toString().trim();
+            String accountEmail = accountEmailTextView.getText().toString().trim();
             String accountPassword = accountPasswordTextView.getText().toString().trim();
 
             @Override
@@ -87,11 +105,12 @@ public class SignUpFragment extends Fragment {
                 authtoken = null;
                 Bundle data = new Bundle();
                 try {
-                    authtoken = sServerAuthenticate.userSignUp(accountPhone, accountName, accountPassword, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
+                    authtoken = sServerAuthenticate.userSignUp(accountPhone, accountEmail, accountPassword, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
 
-                    data.putString(AccountManager.KEY_ACCOUNT_NAME, accountName);
+                    data.putString(AccountManager.KEY_ACCOUNT_NAME, accountEmail);
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, mAccountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
+                    //Store in the account all the USER data we want
                     data.putString(PARAM_USER_PASS, accountPassword);
                     data.putBoolean(SignInActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
                 } catch (Exception e) {
@@ -107,9 +126,12 @@ public class SignUpFragment extends Fragment {
                 //Check if we got a token... if it's null it means that we could not signUp
                 Log.i(TAG, "SERGI: authtoken :" + authtoken);
                  //Store into the preferences all this data so that we can reload when necessary
+
+                //updateAccountData(accountEmail,accountPhone);
                 User.uFirstName = "empty";
                 User.uLastName  = "empty";
-                User.uEmail = accountName;
+                User.uAccountName = accountEmail;
+                User.uEmail = accountEmail;
                 User.uPhone = accountPhone;
                 User.uPassword = accountPassword;
                 User.uToken = authtoken;
@@ -128,12 +150,6 @@ public class SignUpFragment extends Fragment {
         }.execute();
     }
 
-//Need to handle this in the SignUpActivity and not fragment now
-/*
-    @Override
-    public void getActivity().onBackPressedSergi() {
-        getActivity().setResult(RESULT_CANCELED);
-        super.onBackPressed();
-    }
-    */
+
+
 }

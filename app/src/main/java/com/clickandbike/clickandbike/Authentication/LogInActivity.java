@@ -1,5 +1,6 @@
 package com.clickandbike.clickandbike.Authentication;
 
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 

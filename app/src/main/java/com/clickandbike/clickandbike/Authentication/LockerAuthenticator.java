@@ -104,6 +104,13 @@ public class LockerAuthenticator extends AbstractAccountAuthenticator {
         return bundle;
     }
 
+    @Override
+    public Bundle getAccountRemovalAllowed(AccountAuthenticatorResponse response, Account account) {
+        Bundle result = new Bundle();
+        boolean allowed = true; // or whatever logic you want here
+        result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allowed);
+        return result;
+    }
 
     @Override
     public String getAuthTokenLabel(String authTokenType) {
